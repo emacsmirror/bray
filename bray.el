@@ -11,7 +11,7 @@
 
 ;;; Commentary:
 
-;; Bray provides a blank-slate for users to define their own model editing workflow.
+;; Bray provides a blank-slate for users to define their own modal editing workflow.
 ;;
 ;; Key features:
 ;;

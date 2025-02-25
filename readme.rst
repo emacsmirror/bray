@@ -7,7 +7,7 @@ Bray Modal Editing for Emacs
 Description
 ===========
 
-Bray provides a blank-slate for users to define their own model editing workflow.
+Bray provides a blank-slate for users to define their own modal editing workflow.
 
 Key features:
 
@@ -25,13 +25,13 @@ Motivation
 ==========
 
 At the time of writing, modal editing systems are tied to opinionated design decisions
-regarding how model editing should be done.
+regarding how modal editing should be done.
 
 This is fine as long as you're happy to work under these constraints,
 but there can be down sides where you would prefer different behavior,
 there can also be problems mixing these modes with other emacs packages.
 
-In contrast, **bray** aims simply to let the user define their own model editing system,
+In contrast, **bray** aims simply to let the user define their own modal editing system,
 comprised of "states" the user may switch between.
 
 
@@ -97,7 +97,7 @@ a simple init file is included for reference.
 
    emacs --init-dir ./examples/simple
 
-This provides a *very* basic VIM like model editing configuraiton,
+This provides a *very* basic VIM like modal editing configuraiton,
 with ``HJKL`` motion, ``V`` for selection, ``I`` for insert, ``/`` for search... etc.
 
 
