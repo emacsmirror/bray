@@ -237,13 +237,13 @@ Other Variables
 ``bray-state-next``: ``nil``
    Bound to the value ``bray-state`` will be set to.
 
-   This is only set when switching states & can be used by ‘:exit-hook’
+   This is only set when switching states & can be used by ``:exit-hook``
    to perform any special logic that depends the next state.
 
 ``bray-state-prev``: ``nil``
    Bound to the value ``bray-state`` was set to.
 
-   This is only set when switching states & can be used by ‘:enter-hook’
+   This is only set when switching states & can be used by ``:enter-hook``
    to perform any special logic that depends the previous states.
 
 ``bray-state-stack``: ``nil``

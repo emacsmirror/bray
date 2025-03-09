@@ -18,8 +18,9 @@ def patch_help_test(emacs_output: str) -> str:
     def key_replace_quote_to_rst(m: re.Match[str]) -> str:
         return "``{:s}``".format(m.group(2))
 
+    # Allow for quoted properties with optional leading `:`.
     emacs_output = re.sub(
-        "(\u2018)([\\w\\-*]+)(\u2019)",
+        "(\u2018)(:?[\\w\\-*]+)(\u2019)",
         key_replace_quote_to_rst, emacs_output,
     )
 
