@@ -41,7 +41,31 @@ def patch_help_test(emacs_output: str) -> str:
     return emacs_output
 
 
-def main() -> int:
+def text_insert_into_bounds(
+        data: str,
+        data_insert: str,
+        beg_comment: str,
+        end_comment: str,
+        error_when_missing: bool = True,
+) -> str | None:
+    beg_index = data.find(beg_comment)
+    end_index = data.find(end_comment, beg_index)
+
+    if beg_index == -1:
+        if error_when_missing:
+            print('Error: {!r} not found'.format(beg_comment))
+        return None
+    if end_index == -1:
+        if error_when_missing:
+            print('Error: {!r} not found'.format(end_comment))
+        return None
+
+    beg_index += len(beg_comment) + 1
+
+    return data[:beg_index] + data_insert + data[end_index:]
+
+
+def readme_patch_docstrings(data: str) -> str | int:
 
     cmd = [
         EMACS_NAME,
@@ -103,28 +127,26 @@ def main() -> int:
     emacs_output = re.sub(r'[ \t]+(\n|\Z)', r'\1', emacs_output)
     emacs_output = patch_help_test(emacs_output)
 
+    data_result = text_insert_into_bounds(data, emacs_output, '.. BEGIN VARIABLES', '.. END VARIABLES')
+    if data_result is None:
+        return 1
+
+    return data_result
+
+
+def main() -> int:
     # Try write reStructuredText directly!
+    data: str | int = ""
     with open('readme.rst', 'r', encoding='utf-8') as f:
         data = f.read()
 
-    help_begin_text = '.. BEGIN VARIABLES'
-    help_end_text = '.. END VARIABLES'
-    help_begin_index = data.find(help_begin_text)
-    help_end_index = data.find(help_end_text, help_begin_index)
-
-    if help_begin_index == -1:
-        print('Error: {!r} not found'.format(help_begin_text))
-        return 1
-    if help_end_index == -1:
-        print('Error: {!r} not found'.format(help_end_text))
-        return 1
-
-    help_begin_index += len(help_begin_text) + 1
-
-    data_update = data[:help_begin_index] + emacs_output + data[help_end_index:]
+    data = readme_patch_docstrings(data)
+    if isinstance(data, int):
+        return data
 
     with open('readme.rst', 'w', encoding='utf-8') as f:
-        f.write(data_update)
+        f.write(data)
+
     return 0
 
 
