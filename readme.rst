@@ -250,6 +250,18 @@ Other Variables
    A state stack which may be used to push/pop states from the stack.
 
 
+Commands
+--------
+
+``(bray-state-stack-pop)``
+   Pop the current state off the stack.
+
+   Use after `bray-state-stack-push' to restore the previous state.
+   When the stack is empty `bray-state-default' is used.
+
+   Return non-nil when the state changed.
+
+
 Functions
 ---------
 
@@ -267,14 +279,6 @@ Functions
    Push the current state onto the stack and set STATE active.
 
    Return non-nil when the state changed as was pushed.
-
-``(bray-state-stack-pop)``
-   Pop the current state off the stack.
-
-   Use after `bray-state-stack-push' to restore the previous state.
-   When the stack is empty `bray-state-default' is used.
-
-   Return non-nil when the state changed.
 
 .. END VARIABLES
 

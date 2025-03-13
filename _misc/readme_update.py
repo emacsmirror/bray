@@ -99,7 +99,16 @@ def readme_patch_docstrings(data: str) -> str | int:
             """      'bray-mode-hook """
             """      'bray-mode-map))"""
         ),
-
+        "--eval", (
+            """(readme_update-printf \""""
+            """\nCommands"""
+            """\n--------\n\n")"""
+        ),
+        "--eval", (
+            """(readme_update """
+            """"^bray-[a-z]" 'fun-interactive """
+            """(list 'bray-mode))"""
+        ),
         "--eval", (
             """(readme_update-printf \""""
             """\nFunctions"""

@@ -27,7 +27,13 @@
 
 (defun readme_update (prefix ty exclude)
   "Print doc-strings matching PREFIX (regex).
-Of TY in symbol (fun var), excluding symbols in EXCLUDE."
+Of TY in symbol, excluding symbols in EXCLUDE.
+
+Valid values for TY include:
+- 'fun: Non interactive functions.
+- 'fun-interactive: Only interactive functions.
+- 'var: Variables.
+- 'var-custom: Only custom variables."
   (let ((no-doc-string "<undocumented>")
         (vars nil))
     (mapatoms
@@ -36,8 +42,10 @@ Of TY in symbol (fun var), excluding symbols in EXCLUDE."
          (when (string-match-p prefix sym-str)
            (unless (memq sym exclude)
              (when (cond
+                    ((eq ty 'fun-interactive)
+                     (and (fboundp sym) (commandp sym)))
                     ((eq ty 'fun)
-                     (fboundp sym))
+                     (and (fboundp sym) (not (commandp sym))))
                     ((eq ty 'var)
                      (and (not (fboundp sym)) (not (get sym 'custom-type))))
                     ((eq ty 'var-custom)
@@ -49,7 +57,7 @@ Of TY in symbol (fun var), excluding symbols in EXCLUDE."
     ;; NOTE: it seems sorting functions may not be necessary is they
     ;; look to be ordered by default.
     (cond
-     ((eq ty 'fun)
+     ((memq ty (list 'fun 'fun-interactive))
       (setq vars
             (sort vars
                   #'(lambda (x y)
@@ -66,13 +74,13 @@ Of TY in symbol (fun var), excluding symbols in EXCLUDE."
     (dolist (sym vars)
       (let ((doc
              (cond
-              ((eq ty 'fun)
+              ((memq ty (list 'fun 'fun-interactive))
                (or (documentation sym t) no-doc-string))
               ((or (eq ty 'var) (eq ty 'var-custom))
                (or (documentation-property sym 'variable-documentation) no-doc-string)))))
 
         (cond
-         ((eq ty 'fun)
+         ((memq ty (list 'fun 'fun-interactive))
           (readme_update-printf
            "``%s``\n"
            (with-temp-buffer
