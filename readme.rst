@@ -256,8 +256,8 @@ Commands
 ``(bray-state-stack-pop)``
    Pop the current state off the stack.
 
-   Use after `bray-state-stack-push' to restore the previous state.
-   When the stack is empty `bray-state-default' is used.
+   Use after ``bray-state-stack-push`` to restore the previous state.
+   When the stack is empty ``bray-state-default`` is used.
 
    Return non-nil when the state changed.
 
@@ -270,7 +270,7 @@ Functions
    Or throw an error if state is unknown.
 
    A nil STATE may be used to disable all states,
-   this is similar to disabling `bray-mode' and may be done
+   this is similar to disabling ``bray-mode`` and may be done
    to temporarily turn off all bray's functionality.
 
    Return non-nil when the state changed.

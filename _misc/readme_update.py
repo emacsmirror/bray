@@ -24,6 +24,13 @@ def patch_help_test(emacs_output: str) -> str:
         key_replace_quote_to_rst, emacs_output,
     )
 
+    # Allow for quoted properties `symbol'.
+    # For some reason some of these are converted to unicode quotes but others not.
+    emacs_output = re.sub(
+        "(`)([\\w\\-*]+)(')",
+        key_replace_quote_to_rst, emacs_output,
+    )
+
     # Add double back-ticks to lisp keywords,
     # because they are used to represent "code".
     def key_replace_property(m: re.Match[str]) -> str:
