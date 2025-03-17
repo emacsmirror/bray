@@ -321,6 +321,18 @@ Return non-nil when the state changed."
 
 
 ;; ---------------------------------------------------------------------------
+;; Public Variable Wrappers
+;;
+;; These have the advantage they can be forward declared from other packages.
+
+;;;###autoload
+(defun bray-state ()
+  "Return the current state."
+  (declare (important-return-value t))
+  bray-state)
+
+
+;; ---------------------------------------------------------------------------
 ;; Public Functions
 
 ;;;###autoload
