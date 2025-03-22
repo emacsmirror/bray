@@ -349,7 +349,7 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state ()
   "Return the current state."
-  (declare (important-return-value t))
+  (declare (important-return-value t) (side-effect-free t))
   bray-state)
 
 
