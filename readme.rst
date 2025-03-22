@@ -276,6 +276,12 @@ Functions
 ``(bray-state)``
    Return the current state.
 
+``(bray-state-get-hook-enter STATE)``
+   Return the enter hook for STATE.
+
+``(bray-state-get-hook-exit STATE)``
+   Return the exit hook for STATE.
+
 ``(bray-state-derived-from-provided-p STATE STATE-PARENT)``
    Check if STATE equals or is derived from STATE-PARENT.
 

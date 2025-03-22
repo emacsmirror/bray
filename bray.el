@@ -352,6 +352,30 @@ Return non-nil when the state changed."
   (declare (important-return-value t) (side-effect-free t))
   bray-state)
 
+;; ---------------------------------------------------------------------------
+;; Public Functions to Access State Properties
+;;
+;; Mostly external systems shouldn't need to access these,
+;; expose them selectively.
+
+;;;###autoload
+(defun bray-state-get-hook-enter (state)
+  "Return the enter hook for STATE."
+  (declare (important-return-value t) (side-effect-free t))
+  (let ((state-vars (bray--state-get-by-id state)))
+    (unless state-vars
+      (error "State %S not known" state))
+    (bray--state-var-state-hook-enter-symbol state-vars)))
+
+;;;###autoload
+(defun bray-state-get-hook-exit (state)
+  "Return the exit hook for STATE."
+  (declare (important-return-value t) (side-effect-free t))
+  (let ((state-vars (bray--state-get-by-id state)))
+    (unless state-vars
+      (error "State %S not known" state))
+    (bray--state-var-state-hook-exit-symbol state-vars)))
+
 
 ;; ---------------------------------------------------------------------------
 ;; Public Functions
