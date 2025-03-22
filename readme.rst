@@ -198,6 +198,20 @@ Custom Variables
      the function will be evaluated when entering the state.
    ``:lighter`` (required)
      A string, used to set ``bray-state-lighter`` to be displayed in the mode-line.
+   ``:parent`` (optional)
+     A symbol referencing another valid state.
+
+     Note that this is meta-data to support:
+     - ``bray-state-derived-from-provided-p``
+     - ``bray-state-derived-p``
+
+     Instead of checking the state against a known value,
+     the parent value allows multiple states to be derived
+     from another, so state checks can match against multiple states.
+
+     This allows you to define states subtle differences,
+     without complicating logic elsewhere which only needs
+     to know about the parent state.
    ``:cursor-type`` (optional)
      The states cursor type, see docs for ``cursor-type``.
    ``:is-input`` (optional)
@@ -219,12 +233,6 @@ Other Variables
 
 ``bray-state-lighter``: ``"<nil>"``
    The current states lighter (a string).
-
-``bray-state``: ``nil``
-   The current state as a symbol.
-   Matching the value of ``:id`` in ``bray-state-definitions``.
-
-   Do not set this directly, instead use ``bray-state-set``.
 
 ``bray-state-init``: ``nil``
    The initial state to override ``bray-state-default``.
@@ -264,6 +272,15 @@ Commands
 
 Functions
 ---------
+
+``(bray-state)``
+   Return the current state.
+
+``(bray-state-derived-from-provided-p STATE STATE-PARENT)``
+   Check if STATE equals or is derived from STATE-PARENT.
+
+``(bray-state-derived-p STATE-PARENT)``
+   Check if the current state is equals or derived from STATE-PARENT.
 
 ``(bray-state-set STATE)``
    Set STATE to be the active state.

@@ -63,6 +63,20 @@ Each state maps to a property list containing the following keys:
   the function will be evaluated when entering the state.
 :lighter (required)
   A string, used to set `bray-state-lighter' to be displayed in the mode-line.
+:parent (optional)
+  A symbol referencing another valid state.
+
+  Note that this is meta-data to support:
+  - `bray-state-derived-from-provided-p'
+  - `bray-state-derived-p'
+
+  Instead of checking the state against a known value,
+  the parent value allows multiple states to be derived
+  from another, so state checks can match against multiple states.
+
+  This allows you to define states subtle differences,
+  without complicating logic elsewhere which only needs
+  to know about the parent state.
 :cursor-type (optional)
   The states cursor type, see docs for `cursor-type'.
 :is-input (optional)
@@ -141,18 +155,21 @@ to perform any special logic that depends the previous states.")
 (defsubst bray--state-var-lighter (s)
   "Return the :lighter from state S."
   (aref s 2))
+(defsubst bray--state-var-parent (s)
+  "Return the parent from state S."
+  (aref s 3))
 (defsubst bray--state-var-cursor-type (s)
   "Return the :cursor-type from state S."
-  (aref s 3))
+  (aref s 4))
 (defsubst bray--state-var-is-input (s)
   "Return the :is-input from state S."
-  (aref s 4))
+  (aref s 5))
 (defsubst bray--state-var-state-hook-enter-symbol (s)
   "Return the :hook-enter from state S."
-  (aref s 5))
+  (aref s 6))
 (defsubst bray--state-var-state-hook-exit-symbol (s)
   "Return the :hook-exit from state S."
-  (aref s 6))
+  (aref s 7))
 
 
 ;; ---------------------------------------------------------------------------
@@ -267,6 +284,7 @@ Return non-nil when the state changed."
         (kw-lighter nil)
 
         ;; Then optional.
+        (kw-parent nil)
         (kw-cursor-type nil)
         (kw-is-input nil)
         (kw-enter-hook-symbol nil)
@@ -284,6 +302,7 @@ Return non-nil when the state changed."
         (:keymaps (setq kw-keymaps val))
         (:lighter (setq kw-lighter val))
 
+        (:parent (setq kw-parent val))
         (:cursor-type (setq kw-cursor-type val))
         (:is-input (setq kw-is-input val))
 
@@ -310,13 +329,15 @@ Return non-nil when the state changed."
       ,kw-keymaps
       ;; 2: lighter.
       ,kw-lighter
-      ;; 3: cursor-type.
+      ;; 3: parent.
+      ,kw-parent
+      ;; 4: cursor-type.
       ,kw-cursor-type
-      ;; 4: is-input.
+      ;; 5: is-input.
       ,kw-is-input
-      ;; 5: state-hook-enter
+      ;; 6: state-hook-enter
       ,kw-enter-hook-symbol
-      ;; 6: state-hook-exit
+      ;; 7: state-hook-exit
       ,kw-exit-hook-symbol]))
 
 
@@ -334,6 +355,29 @@ Return non-nil when the state changed."
 
 ;; ---------------------------------------------------------------------------
 ;; Public Functions
+
+;;;###autoload
+(defun bray-state-derived-from-provided-p (state state-parent)
+  "Check if STATE equals or is derived from STATE-PARENT."
+  (declare (important-return-value t) (side-effect-free t))
+  (cond
+   ((eq state state-parent)
+    t)
+   (t
+    (let ((result nil))
+      (while (setq state-parent
+                   (let ((state-vars (bray--state-get-by-id state-parent)))
+                     (and state-vars (bray--state-var-parent state-vars))))
+        (when (eq state state-parent)
+          (setq state-parent nil)
+          (setq result t)))
+      result))))
+
+;;;###autoload
+(defun bray-state-derived-p (state-parent)
+  "Check if the current state is equals or derived from STATE-PARENT."
+  (declare (important-return-value t) (side-effect-free t))
+  (bray-state-derived-from-provided-p bray-state state-parent))
 
 ;;;###autoload
 (defun bray-state-set (state)
