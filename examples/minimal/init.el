@@ -144,6 +144,6 @@
 ;; Local Variables:
 ;; fill-column: 99
 ;; indent-tabs-mode: nil
-;; elisp-autofmt-load-packages-local: ("use-package")
+;; elisp-autofmt-load-packages-local: ("use-package" "use-package-core")
 ;; End:
 ;;; bray.el ends here
