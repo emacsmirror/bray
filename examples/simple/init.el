@@ -148,4 +148,4 @@
 ;; indent-tabs-mode: nil
 ;; elisp-autofmt-load-packages-local: ("use-package" "use-package-core")
 ;; End:
-;;; bray.el ends here
+;;; init.el ends here
