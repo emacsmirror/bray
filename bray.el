@@ -15,7 +15,7 @@
 ;;
 ;; Key features:
 ;;
-;; - A way for  to define custom states (such as `normal`, `insert`, `special` etc).
+;; - A way for users to define custom states (such as `normal`, `insert`, `special` etc).
 ;; - Per *state* settings such as cursor, key-maps & enter/exit hooks.
 ;; - Enter/exit hooks can be used to further refine the behavior.
 ;;
@@ -39,7 +39,7 @@ This must be a symbol matching one of the user defined states
 by its :id in `bray-state-definitions'.
 
 - A nil value causes no states to be enabled.
-- You may wish to different states depending on the major mode,
+- You may wish to use different states depending on the major mode,
   this can be done using `bray-state-init'."
   :type 'symbol)
 
