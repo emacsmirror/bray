@@ -142,6 +142,16 @@ to perform any special logic that depends the previous states.")
 (defvar bray--emulation-mode-map-installed nil)
 
 ;; ---------------------------------------------------------------------------
+;; State Utilities
+
+(defun bray--state-ok-or-error (state)
+  "Ensure STATE is a valid type."
+  ;; May be nil or a symbol.
+  (unless (symbolp state)
+    (error "Bray: the state must be a symbol, not a %S" (type-of state))))
+
+
+;; ---------------------------------------------------------------------------
 ;; State Variable Access
 ;;
 ;; Internally state data is stored in a vector for fast lookups.
@@ -384,6 +394,9 @@ Return non-nil when the state changed."
 (defun bray-state-derived-from-provided-p (state state-parent)
   "Check if STATE equals or is derived from STATE-PARENT."
   (declare (important-return-value t) (side-effect-free t))
+  (bray--state-ok-or-error state)
+  (bray--state-ok-or-error state-parent)
+
   (cond
    ((eq state state-parent)
     t)
@@ -401,6 +414,7 @@ Return non-nil when the state changed."
 (defun bray-state-derived-p (state-parent)
   "Check if the current state is equals or derived from STATE-PARENT."
   (declare (important-return-value t) (side-effect-free t))
+  ;; State checks are performed.
   (bray-state-derived-from-provided-p bray-state state-parent))
 
 ;;;###autoload
@@ -414,6 +428,7 @@ to temporarily turn off all bray's functionality.
 
 Return non-nil when the state changed."
   (declare (important-return-value nil))
+  (bray--state-ok-or-error state)
 
   (let ((state-vars-next nil))
     ;; Allow a nil state.
@@ -437,11 +452,13 @@ Return non-nil when the state changed."
 ;; it can be handy to restore the previous state by popping without users
 ;; having to define their own method of remember the previous state.
 
+;;;###autoload
 (defun bray-state-stack-push (state)
   "Push the current state onto the stack and set STATE active.
 
 Return non-nil when the state changed as was pushed."
   (declare (important-return-value nil))
+  (bray--state-ok-or-error state)
 
   (cond
    ((eq state bray-state)
@@ -458,6 +475,7 @@ Return non-nil when the state changed as was pushed."
        (t
         nil))))))
 
+;;;###autoload
 (defun bray-state-stack-pop ()
   "Pop the current state off the stack.
 
