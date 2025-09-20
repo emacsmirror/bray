@@ -528,7 +528,7 @@ Return non-nil when the state changed."
     (let ((maybe-state-defs
            (cond
             ((local-variable-p 'bray-state-definitions)
-             (make-local-variable 'bray-state-definitions)
+             (make-local-variable 'bray--state-data)
              bray-state-definitions)
             ((null bray--state-data)
              bray-state-definitions)
