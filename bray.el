@@ -97,7 +97,8 @@ This must be done before `bray-mode' is activated."
 ;; ---------------------------------------------------------------------------
 ;; Public Variables
 
-(defvar-local bray-state-lighter "<nil>"
+;; The default is typically used as it's overridden by the states.
+(defvar-local bray-state-lighter " <nil>"
   "The current states lighter (a string).")
 
 (defvar-local bray-state nil
