@@ -147,6 +147,7 @@ to perform any special logic that depends the previous states.")
 
 (defun bray--state-ok-or-error (state)
   "Ensure STATE is a valid type."
+  (declare (important-return-value nil) (ftype (function (symbol) null)))
   ;; May be nil or a symbol.
   (unless (symbolp state)
     (error "Bray: the state must be a symbol, not a %S" (type-of state))))
@@ -188,7 +189,7 @@ to perform any special logic that depends the previous states.")
 
 (defun bray--state-get-by-id (state)
   "Return the state associated with the symbol STATE."
-  (declare (important-return-value t))
+  (declare (important-return-value t) (ftype (function (symbol) (or vector null))))
   (let ((state-iter bray--state-data)
         (result nil))
     (while state-iter
@@ -202,7 +203,7 @@ to perform any special logic that depends the previous states.")
 
 (defun bray--state-get-active ()
   "Return the current active state."
-  (declare (important-return-value t))
+  (declare (important-return-value t) (ftype (function () symbol)))
   (bray--state-get-by-id bray-state))
 
 
@@ -214,7 +215,7 @@ to perform any special logic that depends the previous states.")
 STATE-VARS-NEXT & STATE-VARS-PREV for this buffer.
 
 Return non-nil when the state changed."
-  (declare (important-return-value nil))
+  (declare (important-return-value nil) (ftype (function (symbol symbol) boolean)))
 
   ;; Change the current buffer for the changing the cursor.
   ;; Note, why may want this when called from the mini-buffer.
@@ -284,7 +285,7 @@ Return non-nil when the state changed."
 
 (defun bray--state-define (state-plist)
   "Validate & convert STATE-PLIST to internal state data."
-  (declare (important-return-value t))
+  (declare (important-return-value t) (ftype (function (list) vector)))
 
   (unless (and state-plist (listp state-plist))
     (error "The state values must be a property list"))
@@ -360,7 +361,7 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state ()
   "Return the current state."
-  (declare (important-return-value t) (side-effect-free t))
+  (declare (important-return-value t) (side-effect-free t) (ftype (function () symbol)))
   bray-state)
 
 ;; ---------------------------------------------------------------------------
@@ -372,7 +373,7 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state-get-hook-enter (state)
   "Return the enter hook for STATE."
-  (declare (important-return-value t) (side-effect-free t))
+  (declare (important-return-value t) (side-effect-free t) (ftype (function (symbol) symbol)))
   (let ((state-vars (bray--state-get-by-id state)))
     (unless state-vars
       (error "State %S not known" state))
@@ -381,7 +382,7 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state-get-hook-exit (state)
   "Return the exit hook for STATE."
-  (declare (important-return-value t) (side-effect-free t))
+  (declare (important-return-value t) (side-effect-free t) (ftype (function (symbol) symbol)))
   (let ((state-vars (bray--state-get-by-id state)))
     (unless state-vars
       (error "State %S not known" state))
@@ -394,7 +395,10 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state-derived-from-provided-p (state state-parent)
   "Check if STATE equals or is derived from STATE-PARENT."
-  (declare (important-return-value t) (side-effect-free t))
+  (declare
+   (important-return-value t)
+   (side-effect-free t)
+   (ftype (function (symbol symbol) boolean)))
   (bray--state-ok-or-error state)
   (bray--state-ok-or-error state-parent)
 
@@ -414,7 +418,7 @@ Return non-nil when the state changed."
 ;;;###autoload
 (defun bray-state-derived-p (state-parent)
   "Check if the current state is equals or derived from STATE-PARENT."
-  (declare (important-return-value t) (side-effect-free t))
+  (declare (important-return-value t) (side-effect-free t) (ftype (function (symbol) boolean)))
   ;; State checks are performed.
   (bray-state-derived-from-provided-p bray-state state-parent))
 
@@ -428,7 +432,7 @@ this is similar to disabling `bray-mode' and may be done
 to temporarily turn off all bray's functionality.
 
 Return non-nil when the state changed."
-  (declare (important-return-value nil))
+  (declare (important-return-value nil) (ftype (function (symbol) boolean)))
   (bray--state-ok-or-error state)
 
   (let ((state-vars-next nil))
@@ -458,7 +462,7 @@ Return non-nil when the state changed."
   "Push the current state onto the stack and set STATE active.
 
 Return non-nil when the state changed as was pushed."
-  (declare (important-return-value nil))
+  (declare (important-return-value nil) (ftype (function (symbol) boolean)))
   (bray--state-ok-or-error state)
 
   (cond
@@ -484,7 +488,7 @@ Use after `bray-state-stack-push' to restore the previous state.
 When the stack is empty `bray-state-default' is used.
 
 Return non-nil when the state changed."
-  (declare (important-return-value nil))
+  (declare (important-return-value nil) (ftype (function () boolean)))
   (interactive)
 
   (let ((state
