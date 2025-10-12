@@ -175,7 +175,7 @@ Custom Variables
    by its ``:id`` in ``bray-state-definitions``.
 
    - A nil value causes no states to be enabled.
-   - You may wish to different states depending on the major mode,
+   - You may wish to use different states depending on the major mode,
      this can be done using ``bray-state-init``.
 
 ``bray-state-definitions``: ``nil``
@@ -231,7 +231,7 @@ Custom Variables
 Other Variables
 ---------------
 
-``bray-state-lighter``: ``"<nil>"``
+``bray-state-lighter``: ``" <nil>"``
    The current states lighter (a string).
 
 ``bray-state-init``: ``nil``
@@ -243,13 +243,13 @@ Other Variables
      ``bray-state-stack`` with the last state set as active.
 
 ``bray-state-next``: ``nil``
-   Bound to the value ``bray-state`` will be set to.
+   Bound to the value variable ``bray-state`` will be set to.
 
    This is only set when switching states & can be used by ``:exit-hook``
    to perform any special logic that depends the next state.
 
 ``bray-state-prev``: ``nil``
-   Bound to the value ``bray-state`` was set to.
+   Bound to the value variable ``bray-state`` was set to.
 
    This is only set when switching states & can be used by ``:enter-hook``
    to perform any special logic that depends the previous states.
