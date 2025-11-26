@@ -140,7 +140,7 @@
 (add-hook
  'after-change-major-mode-hook
  (lambda ()
-   (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
+   (when (and (null (minibufferp)) (null (derived-mode-p 'special-mode)))
      (bray-mode))))
 
 ;; Local Variables:
