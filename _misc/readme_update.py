@@ -130,6 +130,42 @@ def readme_patch_docstrings(data: str) -> str | int:
             """"^bray-[a-z]" 'fun """
             """(list 'bray-mode))"""
         ),
+
+        # All of the `bray-state-map` options.
+
+        "--load",
+        os.path.join(BASE_DIR, ELISP_NAME.removesuffix(".el") + "-state-map.el"),
+
+
+        "--eval", (
+            """(readme_update-printf \""""
+            """\nState Map"""
+            """\n=========\n\n")"""
+        ),
+
+        "--eval", (
+            """(readme_update-printf \""""
+            """\nSupport key-maps per mode and state.\n"""
+            """\n"""
+            """\nRequires ``bray-state-map-enabled`` is non-nil.\n"""
+            """\n")"""
+        ),
+
+
+        "--eval", (
+            """(readme_update-printf \""""
+            """\nFunctions"""
+            """\n---------\n\n")"""
+        ),
+        "--eval", (
+            """(readme_update """
+            """(list 'bray-state-map) """
+            """"^bray-[a-z]" 'fun """
+            """(list 'bray-state-map--auxiliary-maps))"""
+        ),
+
+
+
     ]
 
     p = subprocess.run(

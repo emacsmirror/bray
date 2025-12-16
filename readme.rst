@@ -14,6 +14,7 @@ Key features:
 - A way for  to define custom states (such as ``normal``, ``insert``, ``special`` etc).
 - Per **state** settings such as cursor, key-maps & enter/exit hooks.
 - Enter/exit hooks can be used to further refine the behavior.
+- Ability to bind keys to keymaps in specific states
 
 The user may define any number of states - which may even be buffer-local,
 allowing for context-dependent modal editing behavior.
@@ -100,7 +101,6 @@ a simple init file is included for reference.
 This provides a *very* basic VIM like modal editing configuraiton,
 with ``HJKL`` motion, ``V`` for selection, ``I`` for insert, ``/`` for search... etc.
 
-
 Installation
 ------------
 
@@ -162,6 +162,48 @@ you may name & add modes as you please.
       (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
         (bray-mode))))
 
+
+Defining State-Specific Keymaps
+-------------------------------
+
+The following example showcases how to bind keys to keymaps in specific states.
+Once evaluated pressing "h" or "l" in a buffer with dired-mode-map active in
+normal state will now invoke ``dired-up-directory`` and ``dired-find-file``
+respectively. For those familiar with evil this functionality is akin to evil's
+``evil-define-key*``. For MEEP users it is akin to ``meep-define-key``.
+
+Note that to use this feature custom variable ``bray-state-map-enabled`` must be
+set to a non-nil value and the file ``bray-state-map.el`` must be loaded.
+
+.. code-block:: elisp
+
+   (setq bray-state-map-enabled t)
+   (require 'bray-state-map)
+   (bray-state-map-set 'normal dired-mode-map "h" 'dired-up-directory)
+   (bray-state-map-set 'normal dired-mode-map "l" 'dired-find-file)
+
+To access this keymap you can use ``bray-state-map-for-keymap-get`` or
+``bray-state-map-for-keymap-ensure`` if you wish to create the keymap as needed.
+
+.. code-block:: elisp
+
+   (bray-state-map-for-keymap-get 'normal dired-mode-map)
+   ;; => (keymap (108 . dired-find-file) (104 . dired-up-directory))
+
+To unset a key bray provides an counterpart to the built-in `keymap-unset`.
+The following example unsets the "h" key previously.
+
+.. code-block:: elisp
+
+   (bray-state-map-unset 'insert dired-mode-map "h")
+
+If you wish to toggle all of the state specific binding you can set
+`bray-state-map-enabled` to (not bray-state-map-enabled) followed by changing
+the state once.
+
+.. code-block:: elisp
+
+   (setq bray-state-map-enabled (not bray-state-map-enabled))
 
 .. BEGIN VARIABLES
 
@@ -226,6 +268,11 @@ Custom Variables
 
    You may set this using ``setq-local`` to declare buffer-local states.
    This must be done before ``bray-mode`` is activated.
+
+``bray-state-map-enabled``: ``nil``
+   If non-nil, support binding to keymaps in specific states.
+   This loads ``bray-state-map``.
+   Also note that this will only take effect upon state change.
 
 
 Other Variables
@@ -302,6 +349,59 @@ Functions
    Push the current state onto the stack and set STATE active.
 
    Return non-nil when the state changed as was pushed.
+
+
+State Map
+=========
+
+
+Support key-maps per mode and state.
+
+
+Requires ``bray-state-map-enabled`` is non-nil.
+
+
+Functions
+---------
+
+``(bray-state-map--for-keymap-get-impl STATE KEYMAP)``
+   Return the auxiliary keymap for KEYMAP in STATE or nil.
+
+``(bray-state-map--for-keymap-ensure-impl STATE KEYMAP)``
+   Return the auxiliary keymap for KEYMAP in STATE, creating it if needed.
+
+``(bray-state-map--for-keymap-remove-impl STATE KEYMAP)``
+   Remove the auxiliary keymap for KEYMAP in STATE, return t if removed.
+
+``(bray-state-map-for-keymap-get STATE KEYMAP)``
+   Return the auxiliary keymap for KEYMAP in STATE.
+   This is the keymap where state-specific bindings are stored.
+   If no auxiliary keymap exists, return nil.
+
+``(bray-state-map-for-keymap-ensure STATE KEYMAP)``
+   Return the auxiliary keymap for KEYMAP in STATE, creating it if needed.
+   This is the keymap where state-specific bindings are stored.
+
+``(bray-state-map-for-keymap-remove STATE KEYMAP)``
+   Remove the auxiliary keymap for KEYMAP in STATE.
+   Return t if the auxiliary keymap existed and was removed, nil otherwise.
+
+``(bray-state-map-set STATE KEYMAP KEY DEF)``
+   Bind KEY to DEF for KEYMAP in STATE.
+
+   STATE is a symbol identifying a bray state.
+   KEYMAP is the keymap that has state-specific bindings.
+   KEY is a key sequence string (as accepted by ``keymap-set``).
+   DEF is the definition to bind to KEY.
+
+``(bray-state-map-unset STATE KEYMAP KEY)``
+   Remove the binding for KEY in KEYMAP for STATE.
+
+   STATE is a symbol identifying a bray state.
+   KEYMAP is the keymap that has state-specific bindings.
+   KEY is a key sequence string (as accepted by ``keymap-unset``).
+
+   Do nothing if no binding exists for this state/keymap/key combination.
 
 .. END VARIABLES
 

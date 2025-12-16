@@ -12,6 +12,10 @@
 ;; No need for startup screen.
 (setq inhibit-startup-screen t)
 
+;; A local define to control: `bray-state-map-enabled'.
+;; Enable this if you wish to bind specific "states" to minor modes.
+(defconst my-use-state-map t)
+
 (defun my-define-keys (map &rest keybinds)
   (declare (indent 1))
   (pcase-dolist (`(,key . ,def) keybinds)
@@ -19,6 +23,10 @@
 
 (use-package bray
   :commands (bray-mode)
+
+  :init
+  (when my-use-state-map
+    (setq bray-state-map-enabled t))
 
   :config
 
@@ -134,7 +142,25 @@
   (my-define-keys my-bray-state-insert-map
     ;; Other keys.
 
-    '("<escape>" . bray-state-stack-pop)))
+    '("<escape>" . bray-state-stack-pop))
+
+  ;; Optional, depends on: `bray-state-map-enabled'.
+
+  (when my-use-state-map
+    ;; Actually useful bindings from my personal configuration.
+    (with-eval-after-load 'dired
+      (bray-state-map-set 'normal dired-mode-map "h" 'dired-up-directory)
+      (bray-state-map-set 'normal dired-mode-map "l" 'dired-find-file)
+      (bray-state-map-set 'normal dired-mode-map "RET" 'dired-find-file)
+      (bray-state-map-set 'normal dired-mode-map "o" 'dired-omit-mode))
+
+    ;; Not so practical,  merely to demonstrate the functionality.
+    (with-eval-after-load 'elisp-mode
+      (bray-state-map-set 'normal emacs-lisp-mode-map "j" 'forward-sexp)
+      (bray-state-map-set 'normal emacs-lisp-mode-map "k" 'backward-sexp)
+
+      (bray-state-map-set 'insert emacs-lisp-mode-map "M-j" 'forward-sexp)
+      (bray-state-map-set 'insert emacs-lisp-mode-map "M-k" 'backward-sexp))))
 
 ;; Enable bray for "typical" editing operation.
 (add-hook

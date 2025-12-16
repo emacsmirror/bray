@@ -28,6 +28,8 @@
 ;; Custom Variables
 
 
+(declare-function bray-state-map--auxiliary-maps "bray-state-map")
+
 (defgroup bray nil
   "Bray mode."
   :group 'convenience)
@@ -93,6 +95,11 @@ You may set this using `setq-local' to declare buffer-local states.
 This must be done before `bray-mode' is activated."
   :type '(repeat (plist :tag "State property list" :key-type (symbol :tag "State property"))))
 
+(defcustom bray-state-map-enabled nil
+  "If non-nil, support binding to keymaps in specific states.
+This loads `bray-state-map'.
+Also note that this will only take effect upon state change."
+  :type 'boolean)
 
 ;; ---------------------------------------------------------------------------
 ;; Public Variables
@@ -129,6 +136,14 @@ to perform any special logic that depends the previous states.")
 
 (defvar-local bray-state-stack nil
   "A state stack which may be used to push/pop states from the stack.")
+
+
+;; ---------------------------------------------------------------------------
+;; Forward Declorations
+
+(declare-function bray-state-map--auxiliary-maps "bray-state-map")
+(declare-function bray-state-map-set "bray-state-map")
+(declare-function bray-state-map-unset "bray-state-map")
 
 
 ;; ---------------------------------------------------------------------------
@@ -268,6 +283,12 @@ Return non-nil when the state changed."
 
     ;; Set the next `state' active.
     (setq bray-state (and state-vars-next (bray--state-var-id state-vars-next)))
+
+    (when bray-state-map-enabled
+      ;; TODO: check if autoload could avoid require here.
+      (require 'bray-state-map)
+      (setq bray--mode-map-alist
+            (append (bray-state-map--auxiliary-maps bray-state) bray--mode-map-alist)))
 
     ;; Run: `enter-hook'.
     (when state-vars-next
@@ -583,6 +604,25 @@ Return non-nil when the state changed."
     (kill-local-variable 'bray-state)
     (kill-local-variable 'bray-state-lighter)
     (kill-local-variable 'bray-state-stack))))
+
+
+;; ---------------------------------------------------------------------------
+;; External Autoloads
+
+;; Autoloads for bray-state-map, avoid having to explicitly "require" this.
+
+;;;###autoload (autoload 'bray-state-map-for-keymap-get "bray-state-map")
+;;;###autoload (autoload 'bray-state-map-for-keymap-ensure "bray-state-map")
+;;;###autoload (autoload 'bray-state-map-for-keymap-remove "bray-state-map")
+;;;###autoload (autoload 'bray-state-map-set "bray-state-map")
+;;;###autoload (autoload 'bray-state-map-unset "bray-state-map")
+
+;; TODO: investigate why a duplicate block is needed.
+(autoload 'bray-state-map-for-keymap-get "bray-state-map")
+(autoload 'bray-state-map-for-keymap-ensure "bray-state-map")
+(autoload 'bray-state-map-for-keymap-remove "bray-state-map")
+(autoload 'bray-state-map-set "bray-state-map")
+(autoload 'bray-state-map-unset "bray-state-map")
 
 (provide 'bray)
 
