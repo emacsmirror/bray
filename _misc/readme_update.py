@@ -89,6 +89,7 @@ def readme_patch_docstrings(data: str) -> str | int:
         ),
         "--eval", (
             """(readme_update """
+            """(list 'bray) """
             """"^bray-[a-z]" 'var-custom """
             """(list 'bray-mode-hook))"""
         ),
@@ -100,6 +101,7 @@ def readme_patch_docstrings(data: str) -> str | int:
         ),
         "--eval", (
             """(readme_update """
+            """(list 'bray) """
             """"^bray-[a-z]" 'var """
             """(list 'bray-mode-off-hook """
             """      'bray-mode-on-hook """
@@ -113,6 +115,7 @@ def readme_patch_docstrings(data: str) -> str | int:
         ),
         "--eval", (
             """(readme_update """
+            """(list 'bray) """
             """"^bray-[a-z]" 'fun-interactive """
             """(list 'bray-mode))"""
         ),
@@ -123,6 +126,7 @@ def readme_patch_docstrings(data: str) -> str | int:
         ),
         "--eval", (
             """(readme_update """
+            """(list 'bray) """
             """"^bray-[a-z]" 'fun """
             """(list 'bray-mode))"""
         ),
