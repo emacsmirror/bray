@@ -15,8 +15,8 @@
 ;;
 ;; Key features:
 ;;
-;; - A way for users to define custom states (such as `normal`, `insert`, `special` etc).
-;; - Per *state* settings such as cursor, key-maps & enter/exit hooks.
+;; - A way for users to define custom states (such as `normal', `insert', `special', etc.)
+;; - Per *state* settings such as cursor, keymaps and enter/exit hooks.
 ;; - Enter/exit hooks can be used to further refine the behavior.
 ;;
 ;; The user may define any number of states - which may even be buffer-local,
@@ -35,40 +35,40 @@
   :group 'convenience)
 
 (defcustom bray-state-default nil
-  "Define the default state when `bray-mode' is enabled.
+  "The default state when `bray-mode' is enabled.
 
-This must be a symbol matching one of the user defined states
+This must be a symbol matching one of the user-defined states
 by its :id in `bray-state-definitions'.
 
 - A nil value causes no states to be enabled.
-- You may wish to use different states depending on the major mode,
+- You may wish to use different states depending on the major mode;
   this can be done using `bray-state-init'."
   :type 'symbol)
 
 (defcustom bray-state-definitions nil
-  "An list where values are a property list for each state.
+  "A list where each element is a property list defining a state.
 
-Each state maps to a property list containing the following keys:
+Each property list may contain the following keys:
 
 :id (required)
-  A symbol used to identify the state,
-  must be unique within this list.
+  A symbol used to identify the state;
+  it must be unique within this list.
 :keymaps (required)
-  A list of cons cells, each referencing a predicate and key-map.
+  A list of cons cells, each referencing a predicate and keymap.
 
-  - The first value of the cell is a symbol,
-    when non-nil the key-map is enabled.
-    The symbol t can be used so the key-map is always enabled in this state.
-  - The second value is a symbol that resolves to the key-map.
+  - The first value of the cell is a symbol;
+    when non-nil, the keymap is enabled.
+    The symbol t can be used so the keymap is always enabled in this state.
+  - The second value is a symbol that resolves to the keymap.
 
-  This value may also be a function that returns a list structured as described,
+  This value may also be a function that returns a list structured as described;
   the function will be evaluated when entering the state.
 :lighter (required)
-  A string, used to set `bray-state-lighter' to be displayed in the mode-line.
+  A string used to set `bray-state-lighter' to be displayed in the mode-line.
 :parent (optional)
   A symbol referencing another valid state.
 
-  Note that this is meta-data to support:
+  Note that this is metadata to support:
   - `bray-state-derived-from-provided-p'
   - `bray-state-derived-p'
 
@@ -76,29 +76,29 @@ Each state maps to a property list containing the following keys:
   the parent value allows multiple states to be derived
   from another, so state checks can match against multiple states.
 
-  This allows you to define states subtle differences,
-  without complicating logic elsewhere which only needs
+  This allows you to define states with subtle differences,
+  without complicating logic elsewhere that only needs
   to know about the parent state.
 :cursor-type (optional)
-  The states cursor type, see docs for `cursor-type'.
+  The state's cursor type; see `cursor-type' for details.
 :is-input (optional)
-  When non-nil, the mode is used for textual input
+  When non-nil, the state is used for textual input
   (the input method is enabled).
 
-  Note that in most cases this should be set.
+  Set this for states where users type text, such as an insert state.
 :enter-hook (optional)
-  A symbol, naming the hook to run when the state is entered.
+  A symbol naming the hook to run when the state is entered.
 :exit-hook (optional)
-  A symbol, naming the hook to run when the state exits.
+  A symbol naming the hook to run when the state exits.
 
 You may set this using `setq-local' to declare buffer-local states.
 This must be done before `bray-mode' is activated."
   :type '(repeat (plist :tag "State property list" :key-type (symbol :tag "State property"))))
 
 (defcustom bray-state-map-enabled nil
-  "If non-nil, support binding to keymaps in specific states.
+  "When non-nil, supports binding to keymaps in specific states.
 This loads `bray-state-map'.
-Also note that this will only take effect upon state change."
+Changes to this variable only take effect when switching to a new state."
   :type 'boolean)
 
 ;; ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ Also note that this will only take effect upon state change."
 
 ;; The default is typically used as it's overridden by the states.
 (defvar-local bray-state-lighter " <nil>"
-  "The current states lighter (a string).")
+  "The current state's lighter (a string).")
 
 (defvar-local bray-state nil
   "The current state as a symbol.
@@ -119,23 +119,23 @@ Do not set this directly, instead use `bray-state-set'.")
 Must be set before `bray-mode' is activated.
 
 - When this is a symbol, it is used for the initial state.
-- When this is a list of symbols it is used to initialize
+- When this is a list of symbols, it is used to initialize
   `bray-state-stack' with the last state set as active.")
 
 (defconst bray-state-next nil
-  "Bound to the value variable `bray-state' will be set to.
+  "Bound to the value that `bray-state' will be set to.
 
-This is only set when switching states & can be used by `:exit-hook'
-to perform any special logic that depends the next state.")
+This is only set when switching states and can be used by `:exit-hook'
+to perform any special logic that depends on the next state.")
 
 (defconst bray-state-prev nil
-  "Bound to the value variable `bray-state' was set to.
+  "Bound to the previous value of `bray-state'.
 
-This is only set when switching states & can be used by `:enter-hook'
-to perform any special logic that depends the previous states.")
+This is only set when switching states and can be used by `:enter-hook'
+to perform any special logic that depends on the previous state.")
 
 (defvar-local bray-state-stack nil
-  "A state stack which may be used to push/pop states from the stack.")
+  "A state stack that may be used to push/pop states.")
 
 
 ;; ---------------------------------------------------------------------------
@@ -415,7 +415,7 @@ Return non-nil when the state changed."
 
 ;;;###autoload
 (defun bray-state-derived-from-provided-p (state state-parent)
-  "Check if STATE equals or is derived from STATE-PARENT."
+  "Check whether STATE equals or is derived from STATE-PARENT."
   (declare
    (important-return-value t)
    (side-effect-free t)
@@ -438,17 +438,16 @@ Return non-nil when the state changed."
 
 ;;;###autoload
 (defun bray-state-derived-p (state-parent)
-  "Check if the current state is equals or derived from STATE-PARENT."
+  "Check whether the current state equals or is derived from STATE-PARENT."
   (declare (important-return-value t) (side-effect-free t) (ftype (function (symbol) boolean)))
   ;; State checks are performed.
   (bray-state-derived-from-provided-p bray-state state-parent))
 
 ;;;###autoload
 (defun bray-state-set (state)
-  "Set STATE to be the active state.
-Or throw an error if state is unknown.
+  "Set STATE to be the active state, or throw an error if STATE is unknown.
 
-A nil STATE may be used to disable all states,
+A nil STATE may be used to disable all states;
 this is similar to disabling `bray-mode' and may be done
 to temporarily turn off all bray's functionality.
 
@@ -482,7 +481,7 @@ Return non-nil when the state changed."
 (defun bray-state-stack-push (state)
   "Push the current state onto the stack and set STATE active.
 
-Return non-nil when the state changed as was pushed."
+Return non-nil when the state changed and was pushed."
   (declare (important-return-value nil) (ftype (function (symbol) boolean)))
   (bray--state-ok-or-error state)
 
@@ -506,7 +505,7 @@ Return non-nil when the state changed as was pushed."
   "Pop the current state off the stack.
 
 Use after `bray-state-stack-push' to restore the previous state.
-When the stack is empty `bray-state-default' is used.
+When the stack is empty, `bray-state-default' is used.
 
 Return non-nil when the state changed."
   (declare (important-return-value nil) (ftype (function () boolean)))

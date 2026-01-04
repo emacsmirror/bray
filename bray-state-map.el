@@ -99,7 +99,7 @@ This is the keymap where state-specific bindings are stored."
 ;;;###autoload
 (defun bray-state-map-for-keymap-remove (state keymap)
   "Remove the auxiliary keymap for KEYMAP in STATE.
-Return t if the auxiliary keymap existed and was removed, nil otherwise."
+Return non-nil if the auxiliary keymap existed and was removed, nil otherwise."
   (bray-state-map--for-keymap-remove-impl state keymap))
 
 ;;;###autoload

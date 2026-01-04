@@ -45,6 +45,9 @@ def patch_help_test(emacs_output: str) -> str:
     # with a single quote.
     emacs_output = emacs_output.replace("\\='", "'")
 
+    # Replace unicode RIGHT SINGLE QUOTATION MARK with ASCII apostrophe.
+    emacs_output = emacs_output.replace("\u2019", "'")
+
     return emacs_output
 
 
@@ -140,15 +143,14 @@ def readme_patch_docstrings(data: str) -> str | int:
         "--eval", (
             """(readme_update-printf \""""
             """\nState Map"""
-            """\n=========\n\n")"""
+            """\n=========\n")"""
         ),
 
         "--eval", (
             """(readme_update-printf \""""
-            """\nSupport key-maps per mode and state.\n"""
-            """\n"""
-            """\nRequires ``bray-state-map-enabled`` is non-nil.\n"""
-            """\n")"""
+            """\nThis module provides state-specific keymap bindings, allowing keys to be bound"""
+            """\nto a keymap only when a particular state is active.\n"""
+            """\nRequires ``bray-state-map-enabled`` to be non-nil.\n\n")"""
         ),
 
 
@@ -161,7 +163,10 @@ def readme_patch_docstrings(data: str) -> str | int:
             """(readme_update """
             """(list 'bray-state-map) """
             """"^bray-[a-z]" 'fun """
-            """(list 'bray-state-map--auxiliary-maps))"""
+            """(list 'bray-state-map--auxiliary-maps """
+            """      'bray-state-map--for-keymap-get-impl """
+            """      'bray-state-map--for-keymap-ensure-impl """
+            """      'bray-state-map--for-keymap-remove-impl))"""
         ),
 
 

@@ -11,10 +11,10 @@ Bray provides a blank-slate for users to define their own modal editing workflow
 
 Key features:
 
-- A way for  to define custom states (such as ``normal``, ``insert``, ``special`` etc).
-- Per **state** settings such as cursor, key-maps & enter/exit hooks.
+- A way for users to define custom states (such as ``normal``, ``insert``, ``special``, etc.)
+- Per **state** settings such as cursor, keymaps and enter/exit hooks.
 - Enter/exit hooks can be used to further refine the behavior.
-- Ability to bind keys to keymaps in specific states
+- Ability to bind keys to keymaps in specific states.
 
 The user may define any number of states - which may even be buffer-local,
 allowing for context-dependent modal editing behavior.
@@ -29,8 +29,8 @@ At the time of writing, modal editing systems are tied to opinionated design dec
 regarding how modal editing should be done.
 
 This is fine as long as you're happy to work under these constraints,
-but there can be down sides where you would prefer different behavior,
-there can also be problems mixing these modes with other emacs packages.
+but there can be downsides where you would prefer different behavior;
+there can also be problems mixing these modes with other Emacs packages.
 
 In contrast, **bray** aims simply to let the user define their own modal editing system,
 comprised of "states" the user may switch between.
@@ -42,46 +42,46 @@ Design Decisions
 While this aims to be a generic modal editing system,
 some opinionated decisions have been made.
 
-- No 3rd party dependencies.
+- No third-party dependencies.
 
 - Only one ``state`` can be active at a time.
 
-  While layering states is not supported, states may share key-maps.
+  While layering states is not supported, states may share keymaps.
 
-- Only one minor-mode ``bray-mode`` which must be explicitly enabled.
+- Only one minor-mode ``bray-mode``, which must be explicitly enabled.
 
   A globalized minor-mode is avoided as controlling when this is/isn't activated can become complicated.
 
 - Each ``state`` contains a limited number of settings,
-  with the expectation further per-state settings will be implemented via hooks.
+  with the expectation that further per-state settings will be implemented via hooks.
 
 - Only explicit actions are called, no ``pre/post-command-hooks``.
 
   Once ``bray-mode`` has been activated,
-  the key-maps associated with the current state will be active,
+  the keymaps associated with the current state will be active;
   there is no further integration or hooks into Emacs
   (which can add overhead and cause compatibility issues).
 
 - Prioritize simplicity.
 
-  Checking other modal editing systems they often resort to kludges
+  Other modal editing systems often resort to kludges
   to implement their entire feature set.
 
-  Since bray aims not to *"get in the way"* in order to prevent conflicts with other packages,
+  Since bray aims not to "get in the way" in order to prevent conflicts with other packages,
   functionality that doesn't fit well with Emacs has been left out.
   This is why (for example) there is no support for per-state cursor-color,
-  as it's not a buffer local setting, ensuring it's valid gets rather involved.
+  as it's not a buffer-local setting; ensuring its validity gets rather involved.
 
 - Use of a "stack" to manage the state (optional).
 
   To support entering and restoring the previous state,
   push & pop functions have been included.
 
-  Using the "stack" is optional, you may prefer to consider all states top-level.
-  In this case only ``bray-state-set`` needs to be used and all ``bray-state-stack-*`` functions can be ignored.
+  Using the "stack" is optional; you may prefer to consider all states top-level.
+  In this case, only ``bray-state-set`` needs to be used and all ``bray-state-stack-*`` functions can be ignored.
 
   Using a stack has the advantage that the interactive "pop" function
-  can be bound to a key which doesn't need any arguments.
+  can be bound to a key that doesn't need any arguments.
 
 
 Usage
@@ -98,15 +98,15 @@ a simple init file is included for reference.
 
    emacs --init-dir ./examples/simple
 
-This provides a *very* basic VIM like modal editing configuraiton,
-with ``HJKL`` motion, ``V`` for selection, ``I`` for insert, ``/`` for search... etc.
+This provides a *very* basic VIM-like modal editing configuration,
+with ``HJKL`` motion, ``V`` for selection, ``I`` for insert, ``/`` for search, etc.
 
-Installation
-------------
+Configuration
+-------------
 
 This example shows a minimal configuration (HJKL motion & insert mode enter/exit).
-Note that names such as ``normal`` & ``insert`` are user defined,
-you may name & add modes as you please.
+Note that names such as ``normal`` & ``insert`` are user-defined;
+you may name & add states as you please.
 
 .. code-block:: elisp
 
@@ -155,7 +155,7 @@ you may name & add modes as you please.
 
     (define-key my-bray-state-insert-map (kbd "<escape>") 'bray-state-stack-pop))
 
-   ;; Enable bray for "typical" editing operation.
+   ;; Enable bray for "typical" editing operations.
    (add-hook
     'after-change-major-mode-hook
     (lambda ()
@@ -167,22 +167,21 @@ Defining State-Specific Keymaps
 -------------------------------
 
 The following example showcases how to bind keys to keymaps in specific states.
-Once evaluated pressing "h" or "l" in a buffer with dired-mode-map active in
-normal state will now invoke ``dired-up-directory`` and ``dired-find-file``
-respectively. For those familiar with evil this functionality is akin to evil's
-``evil-define-key*``. For MEEP users it is akin to ``meep-define-key``.
+Once evaluated, pressing "h" or "l" in a buffer with dired-mode-map active in
+normal state will invoke ``dired-up-directory`` and ``dired-find-file``
+respectively. For those familiar with evil, this functionality is akin to
+``evil-define-key*``.
 
-Note that to use this feature custom variable ``bray-state-map-enabled`` must be
-set to a non-nil value and the file ``bray-state-map.el`` must be loaded.
+Note that to use this feature, the custom variable ``bray-state-map-enabled`` must be
+set to a non-nil value before changing state.
 
 .. code-block:: elisp
 
    (setq bray-state-map-enabled t)
-   (require 'bray-state-map)
    (bray-state-map-set 'normal dired-mode-map "h" 'dired-up-directory)
    (bray-state-map-set 'normal dired-mode-map "l" 'dired-find-file)
 
-To access this keymap you can use ``bray-state-map-for-keymap-get`` or
+To access this keymap, you can use ``bray-state-map-for-keymap-get`` or
 ``bray-state-map-for-keymap-ensure`` if you wish to create the keymap as needed.
 
 .. code-block:: elisp
@@ -190,16 +189,16 @@ To access this keymap you can use ``bray-state-map-for-keymap-get`` or
    (bray-state-map-for-keymap-get 'normal dired-mode-map)
    ;; => (keymap (108 . dired-find-file) (104 . dired-up-directory))
 
-To unset a key bray provides an counterpart to the built-in `keymap-unset`.
-The following example unsets the "h" key previously.
+To unset a key, bray provides a counterpart to the built-in ``keymap-unset``.
+The following example unsets the "h" key bound previously.
 
 .. code-block:: elisp
 
-   (bray-state-map-unset 'insert dired-mode-map "h")
+   (bray-state-map-unset 'normal dired-mode-map "h")
 
-If you wish to toggle all of the state specific binding you can set
-`bray-state-map-enabled` to (not bray-state-map-enabled) followed by changing
-the state once.
+If you wish to toggle all state-specific bindings, set
+``bray-state-map-enabled`` to its opposite value and then change state once
+for the change to take effect.
 
 .. code-block:: elisp
 
@@ -211,39 +210,39 @@ Custom Variables
 ----------------
 
 ``bray-state-default``: ``nil``
-   Define the default state when ``bray-mode`` is enabled.
+   The default state when ``bray-mode`` is enabled.
 
-   This must be a symbol matching one of the user defined states
+   This must be a symbol matching one of the user-defined states
    by its ``:id`` in ``bray-state-definitions``.
 
    - A nil value causes no states to be enabled.
-   - You may wish to use different states depending on the major mode,
+   - You may wish to use different states depending on the major mode;
      this can be done using ``bray-state-init``.
 
 ``bray-state-definitions``: ``nil``
-   An list where values are a property list for each state.
+   A list where each element is a property list defining a state.
 
-   Each state maps to a property list containing the following keys:
+   Each property list may contain the following keys:
 
    ``:id`` (required)
-     A symbol used to identify the state,
-     must be unique within this list.
+     A symbol used to identify the state;
+     it must be unique within this list.
    ``:keymaps`` (required)
-     A list of cons cells, each referencing a predicate and key-map.
+     A list of cons cells, each referencing a predicate and keymap.
 
-     - The first value of the cell is a symbol,
-       when non-nil the key-map is enabled.
-       The symbol t can be used so the key-map is always enabled in this state.
-     - The second value is a symbol that resolves to the key-map.
+     - The first value of the cell is a symbol;
+       when non-nil, the keymap is enabled.
+       The symbol t can be used so the keymap is always enabled in this state.
+     - The second value is a symbol that resolves to the keymap.
 
-     This value may also be a function that returns a list structured as described,
+     This value may also be a function that returns a list structured as described;
      the function will be evaluated when entering the state.
    ``:lighter`` (required)
-     A string, used to set ``bray-state-lighter`` to be displayed in the mode-line.
+     A string used to set ``bray-state-lighter`` to be displayed in the mode-line.
    ``:parent`` (optional)
      A symbol referencing another valid state.
 
-     Note that this is meta-data to support:
+     Note that this is metadata to support:
      - ``bray-state-derived-from-provided-p``
      - ``bray-state-derived-p``
 
@@ -251,58 +250,58 @@ Custom Variables
      the parent value allows multiple states to be derived
      from another, so state checks can match against multiple states.
 
-     This allows you to define states subtle differences,
-     without complicating logic elsewhere which only needs
+     This allows you to define states with subtle differences,
+     without complicating logic elsewhere that only needs
      to know about the parent state.
    ``:cursor-type`` (optional)
-     The states cursor type, see docs for ``cursor-type``.
+     The state's cursor type; see ``cursor-type`` for details.
    ``:is-input`` (optional)
-     When non-nil, the mode is used for textual input
+     When non-nil, the state is used for textual input
      (the input method is enabled).
 
-     Note that in most cases this should be set.
+     Set this for states where users type text, such as an insert state.
    ``:enter-hook`` (optional)
-     A symbol, naming the hook to run when the state is entered.
+     A symbol naming the hook to run when the state is entered.
    ``:exit-hook`` (optional)
-     A symbol, naming the hook to run when the state exits.
+     A symbol naming the hook to run when the state exits.
 
    You may set this using ``setq-local`` to declare buffer-local states.
    This must be done before ``bray-mode`` is activated.
 
 ``bray-state-map-enabled``: ``nil``
-   If non-nil, support binding to keymaps in specific states.
+   When non-nil, supports binding to keymaps in specific states.
    This loads ``bray-state-map``.
-   Also note that this will only take effect upon state change.
+   Changes to this variable only take effect when switching to a new state.
 
 
 Other Variables
 ---------------
 
 ``bray-state-lighter``: ``" <nil>"``
-   The current states lighter (a string).
+   The current state's lighter (a string).
 
 ``bray-state-init``: ``nil``
    The initial state to override ``bray-state-default``.
    Must be set before ``bray-mode`` is activated.
 
    - When this is a symbol, it is used for the initial state.
-   - When this is a list of symbols it is used to initialize
+   - When this is a list of symbols, it is used to initialize
      ``bray-state-stack`` with the last state set as active.
 
 ``bray-state-next``: ``nil``
-   Bound to the value variable ``bray-state`` will be set to.
+   Bound to the value that ``bray-state`` will be set to.
 
-   This is only set when switching states & can be used by ``:exit-hook``
-   to perform any special logic that depends the next state.
+   This is only set when switching states and can be used by ``:exit-hook``
+   to perform any special logic that depends on the next state.
 
 ``bray-state-prev``: ``nil``
-   Bound to the value variable ``bray-state`` was set to.
+   Bound to the previous value of ``bray-state``.
 
-   This is only set when switching states & can be used by ``:enter-hook``
-   to perform any special logic that depends the previous states.
+   This is only set when switching states and can be used by ``:enter-hook``
+   to perform any special logic that depends on the previous state.
 
 ``bray-state-stack``: ``nil``
-   A state stack which may be used to push/pop states from the stack.
+   A state stack that may be used to push/pop states.
 
 
 Commands
@@ -312,7 +311,7 @@ Commands
    Pop the current state off the stack.
 
    Use after ``bray-state-stack-push`` to restore the previous state.
-   When the stack is empty ``bray-state-default`` is used.
+   When the stack is empty, ``bray-state-default`` is used.
 
    Return non-nil when the state changed.
 
@@ -330,16 +329,15 @@ Functions
    Return the exit hook for STATE.
 
 ``(bray-state-derived-from-provided-p STATE STATE-PARENT)``
-   Check if STATE equals or is derived from STATE-PARENT.
+   Check whether STATE equals or is derived from STATE-PARENT.
 
 ``(bray-state-derived-p STATE-PARENT)``
-   Check if the current state is equals or derived from STATE-PARENT.
+   Check whether the current state equals or is derived from STATE-PARENT.
 
 ``(bray-state-set STATE)``
-   Set STATE to be the active state.
-   Or throw an error if state is unknown.
+   Set STATE to be the active state, or throw an error if STATE is unknown.
 
-   A nil STATE may be used to disable all states,
+   A nil STATE may be used to disable all states;
    this is similar to disabling ``bray-mode`` and may be done
    to temporarily turn off all bray's functionality.
 
@@ -348,30 +346,20 @@ Functions
 ``(bray-state-stack-push STATE)``
    Push the current state onto the stack and set STATE active.
 
-   Return non-nil when the state changed as was pushed.
+   Return non-nil when the state changed and was pushed.
 
 
 State Map
 =========
 
+This module provides state-specific keymap bindings, allowing keys to be bound
+to a keymap only when a particular state is active.
 
-Support key-maps per mode and state.
-
-
-Requires ``bray-state-map-enabled`` is non-nil.
+Requires ``bray-state-map-enabled`` to be non-nil.
 
 
 Functions
 ---------
-
-``(bray-state-map--for-keymap-get-impl STATE KEYMAP)``
-   Return the auxiliary keymap for KEYMAP in STATE or nil.
-
-``(bray-state-map--for-keymap-ensure-impl STATE KEYMAP)``
-   Return the auxiliary keymap for KEYMAP in STATE, creating it if needed.
-
-``(bray-state-map--for-keymap-remove-impl STATE KEYMAP)``
-   Remove the auxiliary keymap for KEYMAP in STATE, return t if removed.
 
 ``(bray-state-map-for-keymap-get STATE KEYMAP)``
    Return the auxiliary keymap for KEYMAP in STATE.
@@ -384,7 +372,7 @@ Functions
 
 ``(bray-state-map-for-keymap-remove STATE KEYMAP)``
    Remove the auxiliary keymap for KEYMAP in STATE.
-   Return t if the auxiliary keymap existed and was removed, nil otherwise.
+   Return non-nil if the auxiliary keymap existed and was removed, nil otherwise.
 
 ``(bray-state-map-set STATE KEYMAP KEY DEF)``
    Bind KEY to DEF for KEYMAP in STATE.
@@ -410,7 +398,7 @@ Other Packages
 ==============
 
 While there are many packages that implement modal editing,
-most embed their own editing system, at the time of writing
+most embed their own editing system. At the time of writing,
 there are few direct equivalents.
 
 `Lithium <https://melpa.org/#/lithium>`__
@@ -419,34 +407,34 @@ there are few direct equivalents.
 
    The main differences I'm aware of are:
 
-   - Bray uses a single minor-mode that can switch between "states".
-     whereas Lithium requires each ``mode`` to be an emacs minor-mode.
+   - Bray uses a single minor-mode that can switch between "states",
+     whereas Lithium requires each ``mode`` to be an Emacs minor-mode.
 
-     This has pros & cons, it's convenient as minor-modes have their own hooks & key-maps
-     but the disadvantage compared with Bray which treats "states" as configuration,
-     meaning they can be buffer-local, with multiple key-maps per state.
+     This has pros and cons: minor-modes conveniently have their own hooks and keymaps,
+     but Bray's approach of treating states as configuration allows them to be buffer-local
+     with multiple keymaps per state.
 
-   - Bray expects users to create key-maps using Emacs built-in functions.
-     whereas Lithium provides it's own utilities for defining key-maps.
+   - Bray expects users to create keymaps using Emacs built-in functions,
+     whereas Lithium provides its own utilities for defining keymaps.
 
-   - Bray is intended for technical users who define their own modal editing workflow
-     whereas Lithium intends to be middle-ware (used by other packages).
+   - Bray is intended for technical users who define their own modal editing workflow,
+     whereas Lithium intends to be middleware (used by other packages).
 
 `ryo-modal <https://melpa.org/#/ryo-modal>`__
-   Also has the goal: *to create your own modal editing environment*
+   Also has the goal: *to create your own modal editing environment*.
 
    The main differences I'm aware of are:
 
-   - Bray supports switching between multiple user defined "states",
+   - Bray supports switching between multiple user-defined "states",
      whereas ``ryo-modal`` uses a single ``normal`` mode (to borrow VI's terminology).
 
-   - Bray expects users to provide each "states" key-maps
-     whereas ``ryo-modal`` contains sophisticated utilities to declare the key-map
+   - Bray expects users to provide each state's keymaps,
+     whereas ``ryo-modal`` contains sophisticated utilities to declare the keymap,
      integrating other packages such as multiple-cursors & hydra.
 
-   - Bray has no special logic that runs automatically
-     whereas ``ryo-modal`` installs hooks that run after every command to detect if the command
+   - Bray has no special logic that runs automatically,
+     whereas ``ryo-modal`` installs hooks that run after every command to detect whether the command
      should be repeated & update the cursor color.
 
-   So it's fair to say ``ryo-modal`` is more opinionated & sophisticated,
-   it does more for you but you also need buy into how it works.
+   So it's fair to say ``ryo-modal`` is more opinionated & sophisticated;
+   it does more for you but you also need to buy into how it works.
