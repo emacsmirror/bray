@@ -1,6 +1,6 @@
 ;;; init.el --- Example init. -*- lexical-binding: t -*-
 
-;; This is a simple example that implements a basic VIM like key-map
+;; This is a simple example that implements a basic VIM-like keymap
 ;; using built-in commands.
 
 ;; Run with:
@@ -13,7 +13,7 @@
 (setq inhibit-startup-screen t)
 
 ;; A local define to control: `bray-state-map-enabled'.
-;; Enable this if you wish to bind specific "states" to minor modes.
+;; Enable this if you wish to bind keys to keymaps in specific states.
 (defconst my-use-state-map t)
 
 (defun my-define-keys (map &rest keybinds)
@@ -154,7 +154,7 @@
       (bray-state-map-set 'normal dired-mode-map "RET" 'dired-find-file)
       (bray-state-map-set 'normal dired-mode-map "o" 'dired-omit-mode))
 
-    ;; Not so practical,  merely to demonstrate the functionality.
+    ;; Not so practical, merely to demonstrate the functionality.
     (with-eval-after-load 'elisp-mode
       (bray-state-map-set 'normal emacs-lisp-mode-map "j" 'forward-sexp)
       (bray-state-map-set 'normal emacs-lisp-mode-map "k" 'backward-sexp)
@@ -162,7 +162,7 @@
       (bray-state-map-set 'insert emacs-lisp-mode-map "M-j" 'forward-sexp)
       (bray-state-map-set 'insert emacs-lisp-mode-map "M-k" 'backward-sexp))))
 
-;; Enable bray for "typical" editing operation.
+;; Enable bray for "typical" editing operations.
 (add-hook
  'after-change-major-mode-hook
  (lambda ()

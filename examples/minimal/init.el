@@ -1,6 +1,6 @@
 ;;; init.el --- Example init. -*- lexical-binding: t -*-
 
-;; This is a minimal example with HJKL motion, insert & normal modes.
+;; This is a minimal example with HJKL motion, insert & normal states.
 
 ;; Run with:
 ;; emacs --init-dir ./examples/minimal
@@ -134,7 +134,7 @@
 
     '("<escape>" . bray-state-stack-pop)))
 
-;; Enable bray for "typical" editing operation.
+;; Enable bray for "typical" editing operations.
 (add-hook
  'after-change-major-mode-hook
  (lambda ()
