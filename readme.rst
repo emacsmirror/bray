@@ -116,8 +116,8 @@ you may name & add states as you please.
     :config
 
     ;; Typical normal/insert states.
-    (defvar my-bray-state-normal-map (make-keymap))
-    (defvar my-bray-state-insert-map (make-keymap))
+    (defvar my-bray-state-normal-map (make-sparse-keymap))
+    (defvar my-bray-state-insert-map (make-sparse-keymap))
 
     (setq bray-state-default 'normal)
     (setq bray-state-definitions
