@@ -139,7 +139,7 @@ to perform any special logic that depends on the previous state.")
 
 
 ;; ---------------------------------------------------------------------------
-;; Forward Declorations
+;; Forward Declarations
 
 (declare-function bray-state-map--auxiliary-maps "bray-state-map")
 (declare-function bray-state-map-set "bray-state-map")
@@ -192,10 +192,10 @@ to perform any special logic that depends on the previous state.")
   "Return the :is-input from state S."
   (aref s 5))
 (defsubst bray--state-var-state-hook-enter-symbol (s)
-  "Return the :hook-enter from state S."
+  "Return the :enter-hook from state S."
   (aref s 6))
 (defsubst bray--state-var-state-hook-exit-symbol (s)
-  "Return the :hook-exit from state S."
+  "Return the :exit-hook from state S."
   (aref s 7))
 
 
